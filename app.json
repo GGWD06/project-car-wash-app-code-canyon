@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "ultrama",
+    "slug": "ultrama",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon01.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.mobileapp.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "19b4a94b-7314-4453-9794-1b3a35cf02a5"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
