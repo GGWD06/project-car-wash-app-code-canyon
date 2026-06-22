@@ -20,8 +20,6 @@ const PROGRESS_STEPS = [
 
 export default function HomeScreen({ navigation }) {
   const [userData, setUserData] = React.useState(null);
-  const [fuelData, setFuelData] = React.useState(null);
-  const [region, setRegion] = React.useState('peninsula'); // 'peninsula' or 'east'
   const [activeOrder, setActiveOrder] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [weather, setWeather] = React.useState(null);
@@ -69,14 +67,7 @@ export default function HomeScreen({ navigation }) {
             }
           });
 
-          // 3. Fetch Fuel Prices
-          const fuelRes = await fetch('https://api.data.gov.my/data-catalogue?id=fuelprice&limit=1&sort=-date');
-          const fuelJson = await fuelRes.json();
-          if (fuelJson && fuelJson.length > 0) {
-            setFuelData(fuelJson[0]);
-          }
-
-          // 4. Fetch Weather
+          // 3. Fetch Weather
           const loc = await getUserLocation();
           setUserLocation(loc);
           const weatherData = await fetchWeatherByCoords(loc.coords.latitude, loc.coords.longitude);
@@ -105,8 +96,6 @@ export default function HomeScreen({ navigation }) {
       </View>
     );
   }
-
-  const currentFuel = fuelData;
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
@@ -195,49 +184,6 @@ export default function HomeScreen({ navigation }) {
           </ScrollView>
         </View>
       )}
-
-      {/* 3. Fuel Price Widget */}
-      <View style={[styles.fuelWidget, { backgroundColor: theme.card }]}>
-        <View style={styles.fuelHeader}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="color-fill" size={20} color={theme.text} />
-            <Text style={[styles.fuelTitle, { color: theme.text }]}>Today's Fuel Price</Text>
-          </View>
-          <View style={[styles.regionToggle, { backgroundColor: isDark ? '#333' : '#f0f0f0' }]}>
-            <TouchableOpacity 
-              style={[styles.toggleBtn, region === 'peninsula' && [styles.toggleActive, { backgroundColor: isDark ? '#555' : '#fff' }]]}
-              onPress={() => setRegion('peninsula')}
-            >
-              <Text style={[styles.toggleText, region === 'peninsula' && styles.toggleTextActive]}>Peninsular</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.toggleBtn, region === 'east' && [styles.toggleActive, { backgroundColor: isDark ? '#555' : '#fff' }]]}
-              onPress={() => setRegion('east')}
-            >
-              <Text style={[styles.toggleText, region === 'east' && styles.toggleTextActive]}>East MY</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.fuelPrices}>
-          {[
-            { label: 'RON 95', key: 'ron95', color: '#ffcc00' },
-            { label: 'RON 97', key: 'ron97', color: '#ff3333' },
-            { label: 'Diesel', key: region === 'peninsula' ? 'diesel' : 'diesel_eastmsia', color: isDark ? '#fff' : '#000000' }
-          ].map((fuel, idx) => (
-            <View key={idx} style={styles.fuelItem}>
-              <View style={[styles.fuelIndicator, { backgroundColor: fuel.color }]} />
-              <Text style={[styles.fuelLabel, { color: theme.subText }]}>{fuel.label}</Text>
-              <Text style={[styles.fuelPrice, { color: theme.text }]}>
-                RM {currentFuel && currentFuel[fuel.key] ? Number(currentFuel[fuel.key]).toFixed(2) : '---'}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <Text style={[styles.fuelUpdated, { color: theme.subText }]}>
-          Latest update: {currentFuel?.date || '---'} (data.gov.my)
-        </Text>
-      </View>
 
       {activeOrder && (
         <View style={[styles.activeOrderCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -354,22 +300,6 @@ const styles = StyleSheet.create({
   vehicleInfo: { flex: 1 },
   vehiclePlate: { fontSize: 16, fontWeight: 'bold' },
   vehicleType: { fontSize: 12, marginTop: 2 },
-
-  // Fuel Widget
-  fuelWidget: { marginHorizontal: 15, padding: 18, borderRadius: 20, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 6, marginBottom: 20 },
-  fuelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
-  fuelTitle: { fontSize: 16, fontWeight: 'bold', marginLeft: 8 },
-  regionToggle: { flexDirection: 'row', backgroundColor: '#f0f0f0', borderRadius: 10, padding: 2 },
-  toggleBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  toggleActive: { backgroundColor: '#fff', elevation: 2 },
-  toggleText: { fontSize: 12, color: '#888', fontWeight: '600' },
-  toggleTextActive: { color: '#007AFF' },
-  fuelPrices: { flexDirection: 'row', justifyContent: 'space-between' },
-  fuelItem: { alignItems: 'center', flex: 1 },
-  fuelIndicator: { width: 10, height: 10, borderRadius: 5, marginBottom: 6 },
-  fuelLabel: { fontSize: 12, marginBottom: 4 },
-  fuelPrice: { fontSize: 16, fontWeight: 'bold' },
-  fuelUpdated: { fontSize: 11, textAlign: 'center', marginTop: 15, fontStyle: 'italic' },
 
   activeOrderCard: { 
     marginHorizontal: 15, marginTop: 20, padding: 18, borderRadius: 24,
